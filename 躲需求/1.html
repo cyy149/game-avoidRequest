@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+
+	<style>
+		#content{
+			width: 400px;
+			height: 400px;
+			background-color: #000;
+			margin:50px auto;
+			position:relative;
+		}
+	</style>
+</head>
+<body>
+	
+	<div id="content">
+		
+
+	</div>
+
+	<script>
+	    //得到一个[m,n] 区间的整数
+		function r(m,n){
+			return  Math.ceil( m + (n-m)*Math.random() );
+		}
+
+		document.addEventListener("keydown",function(e){
+			var dt = 5;//按下键时，改变位置的值
+		
+		console.info(e)
+
+			//判断按钮是哪个，决定方向
+			if(38 == e.keyCode ){
+				//向上，减小y
+				plane.y -= dt;
+			}
+			else if(40 == e.keyCode ){
+				//向下，增加y
+				plane.y += dt;
+			}
+			
+			if(37 == e.keyCode ){
+				//向左，减小x
+				plane.x -= dt;
+			}
+			else if(39 == e.keyCode ){
+				//向右，增加x
+				plane.x += dt;
+			}
+
+			//更新飞机的位置
+			plane.move();
+
+			// e.stopPropagation();
+			e.preventDefault();
+			//console.info(e);
+			return false;
+		})
+
+		var plane = {
+			ele : document.createElement("div"),
+			x:200,//在屏幕正中间
+			y:200,
+			set : function(){
+				this.ele.style.position = "absolute";
+				this.ele.style.background = "url(飞机2.png)";
+				this.ele.style.backgroundSize = "100% 100%";
+				this.ele.style.width = "40px";
+				this.ele.style.height = "40px";
+				this.ele.style.top = (this.y-20) +"px";
+				this.ele.style.left = (this.x-20) +"px";
+
+				document.getElementById('content').appendChild(this.ele);
+			},
+			move:function(){
+				console.info(this.x,this.y);
+				this.ele.style.top = (this.y-20) +"px";
+				this.ele.style.left = (this.x-20) +"px";
+			}
+			
+		}
+
+		var game = {
+			timer       : 0, //定时器
+			frameIndex  : 0,
+			bulletNumber:30, //子弹数量
+			startGame:function () {
+				
+				plane.set();   //让飞机就位
+
+
+				var that = this;
+				//主循环
+				this.timer = setInterval(function(){
+					that.frameIndex++;
+					//让所有的子弹开始动起来
+					// console.info(that.frameIndex);
+				},50)
+			},
+			stopGame:function(){
+				clearInterval(this.timer);
+			}
+		}
+
+		//dx 区间是 [-5,5],整数
+		//     dx = Math.ceil( 5 - Math.random()*10  )
+		//dx 区间是 [m,n],整数
+		//     dx = m +  (n-m)*Math.random()
+		function Bullet(){
+			this.dx     = r(-5,5)  //x方向的速度
+			this.dy     = r(-5,5); //y方向的速度
+
+			this.x      = r(200,400);		//位置
+			this.y      = r(200,400);
+			this.color  = "rgb("+r(0,255)+","+r(0,255)+","+r(0,255)+")";//颜色；
+			this.width  = 10;
+			this.height = 10;
+			this.span   = document.createElement("span");
+
+			this.span.style.position = "absolute";
+			this.span.style.width = this.width +"px";
+			this.span.style.height = this.height +"px";
+			this.span.style.backgroundColor = this.color;
+			this.span.style.top = this.y + "px";
+			this.span.style.left = this.x + "px";
+
+			document.getElementById('content').appendChild(this.span);
+		}
+
+		Bullet.prototype.move = function() {
+
+			//在当前的位置上，加上速度
+			this.x = this.x + this.dx;
+			this.y = this.y + this.dy;
+
+			//更新到dom元素中
+		
+			this.span.style.top  = this.y + "px";
+			this.span.style.left = this.x + "px";
+		};
+
+		game.startGame();
+
+
+	</script>
+</body>
+</html>
